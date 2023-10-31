@@ -42,6 +42,17 @@ def getfile():
 
 def main():
     train_set_file=getfile()
+
+    encode_csv=pd.read_csv(train_set_file)   
+    # Initialize a label encoder
+    label_encoder = LabelEncoder()
+    # Fit the encoder and transform the labels
+    label_encoder.fit_transform(encode_csv['v1'])
+     # Open the file in binary write mode and save the label encoder
+    with open('D:/Projects/Spam-SMS-Detection/models/label_encoding.pkl', 'wb') as file:
+        pickle.dump(label_encoder, file)
+
+  
       
     # Split the data into train and test sets 
     train_data, test_data = train_test_split(pd.read_csv(train_set_file), test_size=0.2, random_state=42)
@@ -56,18 +67,6 @@ def main():
 
     with open('D:/Projects/Spam-SMS-Detection/models/tfidf_vectorizer.pkl', 'wb') as vectorizer_file:
         pickle.dump(tfidf_vectorizer, vectorizer_file)
-
-    
-    # Initialize a label encoder
-    label_encoder = LabelEncoder()
-
-    # Fit the encoder and transform the labels
-    train_labels = label_encoder.fit_transform(train_data['v1'])
-    test_labels = label_encoder.fit_transform(test_data['v1'])
-    
-    # Open the file in binary write mode and save the label encoder
-    with open('D:/Projects/Spam-SMS-Detection/models/label_encoding.pkl', 'wb') as file:
-        pickle.dump(label_encoder, file)
 
     best_model=tune_model(train_data,X_train_tfidf)
     # Save the trained model to a pickle file

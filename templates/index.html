@@ -5,28 +5,28 @@
     <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body>
-    <div class="header bg-dark text-white py-4 text-center">
-        <h1>Movie Genre Prediction</h1>
+    <div class="header bg-dark text-white py-2 text-center">
+        <h1>Spam SMS Detection</h1>
     </div>
     <div class="background-image" style="background-image: url('static/images/background.jpeg');"></div>
-    <div class="container mt-4">
-        <h2 class="mb-4">Predict a Movie's Genre</h2>
+    <div class="container custom-mt-5">
+        <h2 class="mb-4">Predict Spam SMS</h2>
         <form method="post" action="/">
             <div class="form-group">
-                <textarea name="plot" rows="4" class="form-control" placeholder="Enter movie plot"></textarea>
+                <textarea name="plot" rows="4" class="form-control" placeholder="Enter the SMS"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Predict Genre</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 
         <div class="genre-container">
-            <h2 class="mt-4">Predicted Genre:</h2>
-            <p > {{genres}} </p>
+            <h2 class="mt-4">Prediction: <span>{{spam}}</span></h2>
+          
           </div>
           
     </div>
     <div class="footer bg-dark text-white py-2 text-center">
-        2023 YourMovieGenrePrediction.com
-        <!-- &copy; -->
+       YourSpamSMSDetection.com
+    
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

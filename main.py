@@ -57,7 +57,7 @@ def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
 
 
-def process_plot(sentence):   
+def process_sms(sentence):   
     # Text Lowercasing
     sentence = sentence.lower()
     # Removing Special Characters and Punctuation
@@ -78,34 +78,35 @@ def process_plot(sentence):
     return " ".join(tokens)
 
 # Define a function to preprocess the input and make predictions
-def predict_genre(plot_text):
+def predict_sms(sms):
   # Clean and preprocess the input plot
-    cleaned_plot = process_plot(plot_text)
+    cleaned_sms = process_sms(sms)
     
     # Use the pre-trained TF-IDF vectorizer to transform the input text
-    input_tfidf = tfidf_vectorizer.transform([cleaned_plot])
+    input_tfidf = tfidf_vectorizer.transform([cleaned_sms])
     
-    predicted_genre = model.predict(input_tfidf)
+    prediction = model.predict(input_tfidf)
   
-    # Now, you can use the loaded label encoder to decode labels
-    decoded_genre = loaded_label_encoder.inverse_transform(predicted_genre)
+    #  use the loaded label encoder to decode labels
+    decoded_prediction = loaded_label_encoder.inverse_transform(prediction)
     # You can convert it to a string and then strip the brackets.
-    decoded_genre_str = str(decoded_genre[0]).strip("[]")
-    # Return the predicted genre
-    return decoded_genre_str
+    if str(decoded_prediction[0]) == 'ham':
+        return 'Not Spam'
+    elif str(decoded_prediction[0]) == 'spam':
+        return 'Spam'
 
 # Define a route to handle the HTML form
 @app.route('/', methods=['GET', 'POST'])
-def predict_movie_genre():
+def predict_spam_sms():
     if request.method == 'POST':
-        plot_text = request.form['plot']
-        # plot_text ='Nah I dont think he goes to usf, he lives around here though'
-        predicted_genre = predict_genre(plot_text)
-        print(predicted_genre)
-        return render_template('index.html', genres=predicted_genre)
+        sms = request.form['plot']
+       
+        prediction = predict_sms(sms)
+      
+        return render_template('index.html', spam=prediction)
     return render_template('index.html')
 
 # Run the Flask app
 if __name__ == '__main__':
-    # predict_movie_genre()
+    
     app.run()
