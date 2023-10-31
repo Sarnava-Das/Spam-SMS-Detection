@@ -5,31 +5,34 @@ from flask import Flask, request, render_template
 import re
 import string
 from nltk.corpus import stopwords
-
 from nltk.stem import PorterStemmer
 import nltk
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
 
-from sklearn.feature_extraction.text import TfidfVectorizer
+import importlib.util
+
+source_file_path = "parent/constants/__init__.py"
+
+spec = importlib.util.spec_from_file_location('__init__', source_file_path)
+source_file = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(source_file)
 
 # Download the NLTK data needed for tokenization and stopwords
-nltk.download('punkt')
-nltk.download('stopwords')
-
+nltk.download(source_file.NLTK_DOWNLOAD)
+nltk.download(source_file.NLTK_STOPWORDS)
 app = Flask(__name__, template_folder='templates')
 
 # Load the pickled model
-with open('D:/Projects/Spam-SMS-Detection/models/linear_regression_model.pkl', 'rb') as file:
+with open(source_file.PRED_MODEL_PATH, 'rb') as file:
     model = pickle.load(file)
 
 # Load the TF-IDF vectorizer
-tfidf_vectorizer_path = 'D:/Projects/Spam-SMS-Detection/models/tfidf_vectorizer.pkl'
-with open(tfidf_vectorizer_path, 'rb') as file:
+with open(source_file.TFIDF_PATH, 'rb') as file:
     tfidf_vectorizer = pickle.load(file)
 
 # Open the file in binary read mode and load the label encoder
-with open('D:/Projects/Spam-SMS-Detection/models/label_encoding.pkl', 'rb') as file:
+with open(source_file.ENCODING_PATH, 'rb') as file:
     loaded_label_encoder = pickle.load(file)
 
 def remove_html_tags(text):
