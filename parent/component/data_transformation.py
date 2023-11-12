@@ -15,10 +15,23 @@ import os
 import pandas as pd
 import pathlib 
 
+import importlib.util
+
+
+# Specify the absolute path to source_file.py
+source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
+# sys.path.append(source_folder_path)
+
+# Use importlib to import source_file
+spec = importlib.util.spec_from_file_location("__init__", source_file_path)
+source_file = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(source_file)
+
+
 
 # Download the NLTK data needed for tokenization and stopwords
-nltk.download('punkt')
-nltk.download('stopwords')
+nltk.download(source_file.NLTK_DOWNLOAD)
+nltk.download(source_file.NLTK_STOPWORDS)
 
 def remove_html_tags(text):
     soup = BeautifulSoup(text, "html.parser")
@@ -45,7 +58,7 @@ def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
 
 def process_genre(genre,column):
-    label_encoded_column='CATEGORY-ENCODED'
+    label_encoded_column=source_file.LABEL_ENCODED_COLUMN
      #  Text Lowercasing
     genre[column] = genre[column].str.lower()
     # Removing Special Characters and Punctuation
@@ -90,16 +103,16 @@ def process_plot(plot_description,column):
 
 def getfile():
     path=[]
-    for dirname, _, filenames in os.walk('D:/Projects/Spam-SMS-Detection'): #'Projects' is the folder name in which the required files are saved
+    for dirname, _, filenames in os.walk(source_file.ROOT_DIR): 
         for filename in filenames:
-            if(pathlib.Path(os.path.join(dirname, filename)).suffix =='.csv'):
+            if(pathlib.Path(os.path.join(dirname, filename)).suffix =='.'+source_file.TRAIN_SET.split('.')[1]):
                 path.append(os.path.join(dirname, filename))
    
    
     train_set_filename=""
   
     for filename in path:
-        if(os.path.basename(filename)=='spam.csv'): #filename with extension
+        if(os.path.basename(filename)==source_file.TRAIN_SET):
             train_set_filename=filename
         
     return train_set_filename
@@ -107,8 +120,8 @@ def getfile():
 def batch_processing(data):
   
     batch_size = 1000  
-    column_to_clean = 'v2'
-    column_to_encode='v1'
+    column_to_clean = source_file.COLUMN_TO_CLEAN
+    column_to_encode=source_file.COLUMN_TO_ENCODE
     processed_data=pd.DataFrame()
     
     
@@ -123,18 +136,16 @@ def batch_processing(data):
    
 
 def main():
-   
-   
   
-    train_file='D:/Projects/Spam-SMS-Detection/datasets/train_processed.csv'
-
+    train_file=source_file.TRAIN_SET_PROCESSED_PATH
     train_set_file=getfile()
+
+    #determine the encoding of the csv file
     with open(train_set_file, 'rb') as rawdata:
         result = chardet.detect(rawdata.read(10000))
     
-    # print(result['encoding'])
-    processed_train=batch_processing(pd.read_csv(train_set_file,encoding=result['encoding']))
     
+    processed_train=batch_processing(pd.read_csv(train_set_file,encoding=result['encoding']))
     processed_train.to_csv(train_file, index=False)
         
 if __name__ == "__main__":
