@@ -34,35 +34,33 @@ def getfile():
 
 def main():
     train_set_file=getfile()
-
     encode_csv=pd.read_csv(train_set_file)   
-    # Initialize a label encoder
     label_encoder = LabelEncoder()
+
     # Fit the encoder and transform the labels
-    label_encoder.fit_transform(encode_csv['v1'])
+    label_encoder.fit_transform(encode_csv[source_file.COLUMN_TO_ENCODE])
+
      # Open the file in binary write mode and save the label encoder
-    with open('D:/Projects/Spam-SMS-Detection/models/label_encoding.pkl', 'wb') as file:
+    with open(source_file.ENCODING_PATH, 'wb') as file:
         pickle.dump(label_encoder, file)
 
-  
-      
     # Split the data into train and test sets 
     train_data, test_data = train_test_split(pd.read_csv(train_set_file), test_size=0.2, random_state=42)
     
     # Fill missing values with "No content"
-    train_data['v2'].fillna("No content", inplace=True)
-    test_data['v2'].fillna("No content", inplace=True)
+    train_data[source_file.COLUMN_TO_CLEAN].fillna("No content", inplace=True)
+    test_data[source_file.COLUMN_TO_CLEAN].fillna("No content", inplace=True)
 
     tfidf_vectorizer = TfidfVectorizer(max_features=5000)
-    X_train_tfidf = tfidf_vectorizer.fit_transform(train_data['v2'])
-    X_test_tfidf = tfidf_vectorizer.transform(test_data['v2'])
+    X_train_tfidf = tfidf_vectorizer.fit_transform(train_data[source_file.COLUMN_TO_CLEAN])
+    X_test_tfidf = tfidf_vectorizer.transform(test_data[source_file.COLUMN_TO_CLEAN])
 
-    with open('D:/Projects/Spam-SMS-Detection/models/tfidf_vectorizer.pkl', 'wb') as vectorizer_file:
+    with open(source_file.TFIDF_PATH, 'wb') as vectorizer_file:
         pickle.dump(tfidf_vectorizer, vectorizer_file)
 
     best_model=tune_model(train_data,X_train_tfidf)
     # Save the trained model to a pickle file
-    with open('D:/Projects/Spam-SMS-Detection/models/linear_regression_model.pkl', 'wb') as file:
+    with open(source_file.PRED_MODEL_PATH, 'wb') as file:
         pickle.dump(best_model, file)
 
 if __name__ == "__main__":
