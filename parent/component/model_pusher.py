@@ -53,7 +53,7 @@ def main():
 
     tfidf_vectorizer = TfidfVectorizer(max_features=5000)
     X_train_tfidf = tfidf_vectorizer.fit_transform(train_data[source_file.COLUMN_TO_CLEAN])
-    X_test_tfidf = tfidf_vectorizer.transform(test_data[source_file.COLUMN_TO_CLEAN])
+    tfidf_vectorizer.transform(test_data[source_file.COLUMN_TO_CLEAN])
 
     with open(source_file.TFIDF_PATH, 'wb') as vectorizer_file:
         pickle.dump(tfidf_vectorizer, vectorizer_file)

@@ -8,11 +8,7 @@ from sklearn.svm import SVC
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 
-import pickle
-
 import importlib.util
-
-
 
 # Specify the absolute path to source_file.py
 source_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../constants/__init__.py'))
@@ -47,9 +43,6 @@ def tune_model(train_data,X_train):
     return random_search.best_estimator_
 
    
-   
-  
-
 def train_model(best_model,test_data_soln,X_test):
     y_pred = best_model.predict(X_test)
     accuracy = accuracy_score(test_data_soln[source_file.LABEL_ENCODED_COLUMN], y_pred)
