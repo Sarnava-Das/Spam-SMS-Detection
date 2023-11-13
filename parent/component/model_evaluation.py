@@ -69,15 +69,15 @@ def lr_model(train_data,test_data_soln,X_train,X_test):
 
 def getfile():
     path=[]
-    for dirname, _, filenames in os.walk('D:/Projects/Spam-SMS-Detection'): #'Projects' is the folder name in which the required files are saved
+    for dirname, _, filenames in os.walk(source_file.ROOT_DIR): 
         for filename in filenames:
-            if(pathlib.Path(os.path.join(dirname, filename)).suffix =='.csv'):
+            if(pathlib.Path(os.path.join(dirname, filename)).suffix =='.'+source_file.TRAIN_SET.split('.')[1]):
                 path.append(os.path.join(dirname, filename))
    
    
     train_set_filename=""
     for filename in path:
-        if(os.path.basename(filename)=='train_processed.csv'): #filename with extension
+        if(os.path.basename(filename)==source_file.TRAIN_SET_PROCESSED_NAME): 
             train_set_filename=filename
     return train_set_filename
 
@@ -88,12 +88,12 @@ def main():
     train_data, test_data = train_test_split(pd.read_csv(train_set_file), test_size=0.2, random_state=42)
     
     # Fill missing values with "No content"
-    train_data['v2'].fillna("No content", inplace=True)
-    test_data['v2'].fillna("No content", inplace=True)
+    train_data[source_file.COLUMN_TO_CLEAN].fillna("No content", inplace=True)
+    test_data[source_file.COLUMN_TO_CLEAN].fillna("No content", inplace=True)
 
     tfidf_vectorizer = TfidfVectorizer(max_features=5000)
-    X_train_tfidf = tfidf_vectorizer.fit_transform(train_data['v2'])
-    X_test_tfidf = tfidf_vectorizer.transform(test_data['v2'])
+    X_train_tfidf = tfidf_vectorizer.fit_transform(train_data[source_file.COLUMN_TO_CLEAN])
+    X_test_tfidf = tfidf_vectorizer.transform(test_data[source_file.COLUMN_TO_CLEAN])
 
     
     svm_model(train_data,test_data,X_train_tfidf,X_test_tfidf)
