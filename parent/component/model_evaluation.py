@@ -1,9 +1,6 @@
-
 import os
 import pandas as pd
 import pathlib 
-
-
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -40,11 +37,11 @@ def nb_model(train_data,test_data,X_train,X_test):
 def svm_model(train_data,test_data,X_train,X_test):
    
     svm_classifier = SVC(kernel='linear', C=1.0)
-    svm_classifier.fit(X_train,train_data['CATEGORY-ENCODED'] )
+    svm_classifier.fit(X_train,train_data[source_file.LABEL_ENCODED_COLUMN] )
     predictions = svm_classifier.predict(X_test)
 
    
-    accuracy = accuracy_score(test_data['CATEGORY-ENCODED'], predictions)
+    accuracy = accuracy_score(test_data[source_file.LABEL_ENCODED_COLUMN], predictions)
     print(f"SVM Accuracy: {accuracy * 100:.2f}%")
 
   
@@ -54,7 +51,7 @@ def lr_model(train_data,test_data_soln,X_train,X_test):
     
     # Create and train the Logistic Regression model
     logistic_regression_model = LogisticRegression(max_iter=1000)
-    logistic_regression_model.fit(X_train, train_data['CATEGORY-ENCODED'])
+    logistic_regression_model.fit(X_train, train_data[source_file.LABEL_ENCODED_COLUMN])
 
     # Predict the genres for the test data
     y_pred = logistic_regression_model.predict(X_test)
@@ -62,7 +59,7 @@ def lr_model(train_data,test_data_soln,X_train,X_test):
   
 
     # Calculate accuracy 
-    accuracy = accuracy_score(test_data_soln['CATEGORY-ENCODED'], y_pred)
+    accuracy = accuracy_score(test_data_soln[source_file.LABEL_ENCODED_COLUMN], y_pred)
     
     print(f"Logistic Regression Accuracy: {accuracy * 100:.2f}%")
    
